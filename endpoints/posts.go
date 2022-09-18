@@ -41,8 +41,9 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 	actualPost.ID = index
 	index++
-	if actualPost.Username == "" {
-		actualPost.Username = "名字没有传"
+	if !isUsernameContextOk(actualPost.Username, r) {
+		http.Error(w, "Cannot manage post for another user by addPost", http.StatusUnauthorized)
+		return
 	}
 	actualPost.Date = time.Now()
 	if actualPost.Comments == nil {
@@ -68,6 +69,10 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 	}
 	for i := 0; i < len(posts); i++ {
 		if posts[i].ID == id {
+			if !isUsernameContextOk(posts[i].Username, r) {
+				http.Error(w, "Cannot manage post for another user by delete", http.StatusUnauthorized)
+				return
+			}
 			posts[i] = posts[len(posts)-1]
 			posts = posts[:len(posts)-1]
 			w.WriteHeader(http.StatusOK)
@@ -95,6 +100,10 @@ func addComment(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&actualComment)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if !isUsernameContextOk(actualComment.Username, r) {
+		http.Error(w, "Cannot manage post for another user by add comment", http.StatusUnauthorized)
 		return
 	}
 

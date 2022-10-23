@@ -33,10 +33,6 @@ func (c *Comment) Validate() error {
 	if c.AuthorID < 1 {
 		return errors.New("Required Author")
 	}
-	if c.PostID < 1 {
-		return errors.New("Required PostID")
-	}
-
 	return nil
 }
 
@@ -60,4 +56,22 @@ func (c *Comment) DeleteAComment(db *gorm.DB, commentId uint64, uid uint64) (int
 		return 0, db.Error
 	}
 	return db.RowsAffected, nil
+}
+
+func (c *Comment) GetCommentsByPostId(db *gorm.DB, postId uint64) ([]*Comment4Api, error) {
+	var cs []Comment
+	cErr := db.Debug().Model(&Comment{}).Where("post_id in (?)", postId).Limit(100).Find(&cs).Error
+	if cErr != nil {
+		return nil, cErr
+	}
+	comment4Apis := make([]*Comment4Api, 0)
+	for _, comment := range cs {
+		cu := &User{}
+		cuErr := db.Debug().Model(&User{}).Where("user_id = ?", comment.AuthorID).Take(cu).Error
+		if cuErr != nil {
+			return nil, cuErr
+		}
+		comment4Apis = append(comment4Apis, TransComment4Api(&comment, postId, cu))
+	}
+	return comment4Apis, nil
 }

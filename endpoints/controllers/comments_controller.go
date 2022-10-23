@@ -16,6 +16,15 @@ import (
 
 func (server *Server) CreateComments(w http.ResponseWriter, r *http.Request) {
 
+	vars := mux.Vars(r)
+
+	// Check if the post id is valid
+	pid, err := strconv.ParseUint(vars["post_id"], 10, 64)
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
@@ -28,6 +37,7 @@ func (server *Server) CreateComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	comment.Prepare()
+	comment.PostID = pid
 	err = comment.Validate()
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
@@ -49,7 +59,7 @@ func (server *Server) CreateComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Lacation", fmt.Sprintf("%s%s/%d", r.Host, r.URL.Path, commentCreated.CommentID))
-	responses.JSON(w, http.StatusCreated, commentCreated)
+	responses.JSON(w, http.StatusOK, commentCreated)
 }
 
 func (server *Server) DeleteComment(w http.ResponseWriter, r *http.Request) {
@@ -89,5 +99,12 @@ func (server *Server) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Entity", fmt.Sprintf("%d", cid))
-	responses.JSON(w, http.StatusNoContent, "")
+	// 现有post的所有评论查询
+	comments, err := comment.GetCommentsByPostId(server.DB, comment.CommentID)
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusOK, comments)
 }

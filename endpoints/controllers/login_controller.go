@@ -31,16 +31,24 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
-	token, err := server.SignIn(user.Email, user.Password)
+	dbUser, token, err := server.SignIn(user.Email, user.Password)
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
 		responses.ERROR(w, http.StatusUnprocessableEntity, formattedError)
 		return
 	}
-	responses.JSON(w, http.StatusOK, token)
+	responses.JSON(w, http.StatusOK, struct {
+		Token  string `json:"token"`
+		Email  string `json:"email"`
+		UserId uint64 `json:"user_id"`
+	}{
+		Token:  token,
+		Email:  dbUser.Email,
+		UserId: dbUser.UserID,
+	})
 }
 
-func (server *Server) SignIn(email, password string) (string, error) {
+func (server *Server) SignIn(email, password string) (*models.User, string, error) {
 
 	var err error
 
@@ -49,14 +57,15 @@ func (server *Server) SignIn(email, password string) (string, error) {
 	err = server.DB.Debug().Model(models.User{}).Where("email = ?", email).Take(&user).Error
 	if err != nil {
 		fmt.Println("SignIn query user error：", err)
-		return "", err
+		return nil, "", err
 	}
 	err = models.VerifyPassword(user.Password, password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		fmt.Println("SignIn.VerifyPassword user.Password：", user.Password, "password", password)
 		fmt.Println("SignIn.VerifyPassword error：", err)
-		return "", err
+		return nil, "", err
 	}
-	return auth.CreateToken(user.UserID)
+	token, err := auth.CreateToken(user.UserID)
+	return &user, token, err
 }

@@ -41,22 +41,35 @@ func (p *Post) Validate() error {
 	return nil
 }
 
-func (p *Post) SavePost(db *gorm.DB) (*Post, error) {
+func (p *Post) SavePost(db *gorm.DB) (*Post4Api, error) {
 	var err error
 	err = db.Debug().Model(&Post{}).Create(&p).Error
 	if err != nil {
-		return &Post{}, err
+		return &Post4Api{}, err
 	}
-	return p, nil
+	u := &User{}
+	err = db.Debug().Model(&User{}).Where("user_id = ?", p.AuthorID).Take(u).Error
+	if err != nil {
+		return nil, err
+	}
+	return TransPost4Api(p, u, nil), nil
 }
 
-func (p *Post) FindAllPosts(db *gorm.DB) ([]*Post4Api, error) {
+func (p *Post) FindAllPosts(db *gorm.DB, uid uint64) ([]*Post4Api, error) {
 	var err error
 	posts := []Post{}
-	err = db.Debug().Model(&Post{}).Order(clause.OrderByColumn{
-		Column: clause.Column{Table: clause.CurrentTable, Name: clause.PrimaryKey},
-		Desc:   true,
-	}).Limit(100).Find(&posts).Error
+	if uid == 0 {
+		err = db.Debug().Model(&Post{}).Order(clause.OrderByColumn{
+			Column: clause.Column{Table: clause.CurrentTable, Name: clause.PrimaryKey},
+			Desc:   true,
+		}).Limit(100).Find(&posts).Error
+	} else {
+		err = db.Debug().Model(&Post{}).Where("author_id = ?", uid).Order(clause.OrderByColumn{
+			Column: clause.Column{Table: clause.CurrentTable, Name: clause.PrimaryKey},
+			Desc:   true,
+		}).Limit(100).Find(&posts).Error
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +98,7 @@ func (p *Post) FindAllPosts(db *gorm.DB) ([]*Post4Api, error) {
 				if cuErr != nil {
 					return nil, cuErr
 				}
-				comment4Apis = append(comment4Apis, TransComment4Api(&comment, &post, cu))
+				comment4Apis = append(comment4Apis, TransComment4Api(&comment, post.PostID, cu))
 			}
 			post4Apis = append(post4Apis, TransPost4Api(&post, u, comment4Apis))
 		}

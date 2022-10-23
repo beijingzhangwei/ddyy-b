@@ -50,7 +50,16 @@ func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.UserID))
-	responses.JSON(w, http.StatusCreated, userCreated)
+	token, _ := auth.CreateToken(user.UserID)
+	responses.JSON(w, http.StatusCreated, struct {
+		Token  string `json:"token"`
+		Email  string `json:"email"`
+		UserId uint64 `json:"user_id"`
+	}{
+		Token:  token,
+		Email:  user.Email,
+		UserId: user.UserID,
+	})
 }
 
 func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {

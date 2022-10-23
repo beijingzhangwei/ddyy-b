@@ -12,14 +12,14 @@ type Comment4Api struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
-func TransComment4Api(comment *Comment, post *Post, cu *User) *Comment4Api {
+func TransComment4Api(comment *Comment, postId uint64, cu *User) *Comment4Api {
 	return &Comment4Api{
 		ID:            comment.ID,
 		CommentID:     comment.CommentID,
-		PostID:        post.PostID,
+		PostID:        postId,
 		CommentAuthor: TransferUserRaw2UserApi(cu),
 		Content:       comment.Content,
-		CreatedAt:     post.CreatedAt,
-		UpdatedAt:     post.UpdatedAt,
+		CreatedAt:     comment.CreatedAt,
+		UpdatedAt:     comment.UpdatedAt,
 	}
 }

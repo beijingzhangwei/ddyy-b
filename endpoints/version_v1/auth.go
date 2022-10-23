@@ -19,8 +19,8 @@ type User struct {
 var users map[string][]byte = make(map[string][]byte)
 var idxUsers int = 0
 
-//getTokenUserPassword returns a jwt token for a user if the password is ok
-func getTokenUserPassword(w http.ResponseWriter, r *http.Request) {
+//GetTokenUserPassword returns a jwt token for a user if the password is ok
+func GetTokenUserPassword(w http.ResponseWriter, r *http.Request) {
 	var u User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {

@@ -50,15 +50,35 @@ func (server *Server) CreatePost(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusInternalServerError, formattedError)
 		return
 	}
+
 	w.Header().Set("Lacation", fmt.Sprintf("%s%s/%d", r.Host, r.URL.Path, postCreated.PostID))
-	responses.JSON(w, http.StatusCreated, postCreated)
+	responses.JSON(w, http.StatusOK, postCreated)
 }
 
 func (server *Server) GetPosts(w http.ResponseWriter, r *http.Request) {
 
 	post := models.Post{}
 
-	posts, err := post.FindAllPosts(server.DB)
+	posts, err := post.FindAllPosts(server.DB, 0)
+	if err != nil {
+		responses.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, posts)
+}
+
+func (server *Server) GetPostsByUserId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// Check if the post id is valid
+	uid, err := strconv.ParseUint(vars["user_id"], 10, 64)
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	post := models.Post{}
+
+	posts, err := post.FindAllPosts(server.DB, uid)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return

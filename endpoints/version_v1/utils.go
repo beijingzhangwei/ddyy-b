@@ -1,4 +1,4 @@
-package endpoints
+package version_v1
 
 import (
 	"encoding/json"
@@ -43,9 +43,10 @@ func sendJSONResponse(w http.ResponseWriter, data interface{}) {
 func getSecret() string {
 	secret := os.Getenv("ACCESS_SECRET")
 	if secret == "" {
-		//That's surely a big secret this way...
 		secret = "sakdfhagadskgbdjs"
+		log.Printf("Failed to get secret  from OS, so woe use the default  secret=%s ", secret)
 	}
+	log.Printf("getSecret return secret=%s ", secret)
 	return secret
 }
 

@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/beijingzhangwei/ddyy-b/endpoints"
+	"github.com/beijingzhangwei/ddyy-b/endpoints/version_v1"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-func main() {
+func main_() {
 	r := mux.NewRouter()
-	r = endpoints.AddRouterEndpoints(r)
+	r = version_v1.AddRouterEndpoints(r)
 	fs := http.FileServer(http.Dir("./dist"))
 	r.PathPrefix("/").Handler(fs)
 

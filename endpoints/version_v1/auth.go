@@ -1,4 +1,4 @@
-package endpoints
+package version_v1
 
 import (
 	"encoding/json"
@@ -36,6 +36,7 @@ func getTokenUserPassword(w http.ResponseWriter, r *http.Request) {
 
 	err = bcrypt.CompareHashAndPassword(passwordHash, []byte(u.Password))
 	if err != nil {
+		http.Error(w, "Cannot find the username", http.StatusNotFound)
 		return
 	}
 	token, err := createToken(u.Username)
@@ -95,7 +96,7 @@ func createToken(username string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["username"] = username
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = time.Now().Add(time.Minute * 150).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	secret := getSecret()
 	token, err := at.SignedString([]byte(secret))

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/auth"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/models"
-	responses "github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
+	"github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/utils/formaterror"
 	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"

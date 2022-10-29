@@ -2,10 +2,9 @@ package middlewares
 
 import (
 	"errors"
+	"github.com/beijingzhangwei/ddyy-b/endpoints/auth"
 	responses "github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
 	"net/http"
-
-	"github.com/beijingzhangwei/ddyy-b/endpoints/auth"
 )
 
 func SetMiddlewareJSON(next http.HandlerFunc) http.HandlerFunc {

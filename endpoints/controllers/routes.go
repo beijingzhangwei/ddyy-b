@@ -17,6 +17,8 @@ func (s *Server) initializeRoutes() {
 	//Users routes
 	s.Router.HandleFunc("/api/auth/create-user", middlewares.SetMiddlewareJSON(s.CreateUser)).Methods("POST")
 	s.Router.HandleFunc("/api/users/{user_id}", middlewares.SetMiddlewareJSON(s.GetUser)).Methods("GET")
+	s.Router.HandleFunc("/api/user_by_email/{email}", middlewares.SetMiddlewareJSON(s.GetUserByEmail)).Methods("GET")
+
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON(s.GetUsers)).Methods("GET")
 
 	s.Router.HandleFunc("/users/{user_id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateUser))).Methods("PUT")

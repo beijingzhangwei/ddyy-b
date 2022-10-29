@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/auth"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/models"
-	responses "github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
+	"github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/utils/formaterror"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -84,6 +84,19 @@ func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user := models.User{}
 	userGotten, err := user.FindUserByID(server.DB, uint32(uid))
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, userGotten)
+}
+
+func (server *Server) GetUserByEmail(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	email := vars["email"]
+	user := models.User{}
+	userGotten, err := user.FindUserByEmail(server.DB, email)
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return

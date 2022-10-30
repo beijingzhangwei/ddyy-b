@@ -86,6 +86,26 @@ func (server *Server) GetPostsByUserId(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, posts)
 }
 
+func (server *Server) GetPostsByUserEmail(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// Check if the post id is valid
+	user := models.User{}
+	userGotten, err := user.FindUserByEmail(server.DB, vars["email"])
+	if err != nil {
+		responses.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+	post := models.Post{}
+
+	posts, err := post.FindAllPosts(server.DB, userGotten.UserID)
+	if err != nil {
+		responses.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+	responses.JSON(w, http.StatusOK, posts)
+}
+
 func (server *Server) GetPost(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

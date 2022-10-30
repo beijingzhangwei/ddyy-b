@@ -27,6 +27,7 @@ func (s *Server) initializeRoutes() {
 	//Posts routes
 	s.Router.HandleFunc("/api/posts", middlewares.SetMiddlewareJSON(s.GetPosts)).Methods("GET")
 	s.Router.HandleFunc("/api/one_user_posts/{user_id}", middlewares.SetMiddlewareJSON(s.GetPostsByUserId)).Methods("GET")
+	s.Router.HandleFunc("/api/one_user_posts_by_email/{email}", middlewares.SetMiddlewareJSON(s.GetPostsByUserEmail)).Methods("GET")
 	s.Router.HandleFunc("/api/posts", middlewares.SetMiddlewareJSON(s.CreatePost)).Methods("POST")
 	s.Router.HandleFunc("/api/posts/{post_id}", middlewares.SetMiddlewareAuthentication(s.DeletePost)).Methods("DELETE")
 	s.Router.HandleFunc("/posts/{post_id}", middlewares.SetMiddlewareJSON(s.GetPost)).Methods("GET")

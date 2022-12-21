@@ -78,11 +78,18 @@ func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) SwitchLight(w http.ResponseWriter, r *http.Request) {
-	switchOpen := make(map[string]int)
+	switchOpen := make(map[string]string)
 	switchCount = switchCount + 1
-	token := mqtt.ProducerMqtt.Publish("topic/test", 0, false, switchCount)
+	text := fmt.Sprintf("%d", switchCount)
+	token := mqtt.ProducerMqtt.Publish("topic/test", 0, false, text)
 	token.Wait()
-	switchOpen["switchCount"] = switchCount
+	switchOpen["switchCount"] = text
+	if token.Error() != nil {
+		switchOpen["error"] = token.Error().Error()
+	} else {
+		switchOpen["success"] = "good!"
+	}
+
 	responses.JSON(w, http.StatusOK, switchOpen)
 }
 

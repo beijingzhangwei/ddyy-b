@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var producerMqtt mqtt.Client
+
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("Producer Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 }
@@ -41,9 +43,9 @@ func producerPoint() {
 }
 
 func publish(client mqtt.Client) {
-	num := 10
+	num := 1000
 	for i := 0; i < num; i++ {
-		text := fmt.Sprintf("Message %d", i)
+		text := fmt.Sprintf("%d", i)
 		token := client.Publish(topic, 0, false, text)
 		token.Wait()
 		time.Sleep(time.Second)

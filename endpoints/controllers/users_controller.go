@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/auth"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/models"
+	"github.com/beijingzhangwei/ddyy-b/endpoints/mqtt"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/utils/formaterror"
 	"github.com/gorilla/mux"
@@ -15,6 +16,8 @@ import (
 	"strconv"
 	"time"
 )
+
+var switchCount int
 
 func (server *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
 
@@ -72,6 +75,15 @@ func (server *Server) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responses.JSON(w, http.StatusOK, users)
+}
+
+func (server *Server) SwitchLight(w http.ResponseWriter, r *http.Request) {
+	switchOpen := make(map[string]int)
+	switchCount = switchCount + 1
+	token := mqtt.ProducerMqtt.Publish("topic/test", 0, false, switchCount)
+	token.Wait()
+	switchOpen["switchCount"] = switchCount
+	responses.JSON(w, http.StatusOK, switchOpen)
 }
 
 func (server *Server) GetUser(w http.ResponseWriter, r *http.Request) {

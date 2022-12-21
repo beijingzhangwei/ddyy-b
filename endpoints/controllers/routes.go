@@ -20,6 +20,7 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/api/user_by_email/{email}", middlewares.SetMiddlewareJSON(s.GetUserByEmail)).Methods("GET")
 
 	s.Router.HandleFunc("/users", middlewares.SetMiddlewareJSON(s.GetUsers)).Methods("GET")
+	s.Router.HandleFunc("/switch_light", middlewares.SetMiddlewareJSON(s.SwitchLight)).Methods("GET")
 
 	s.Router.HandleFunc("/users/{user_id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateUser))).Methods("PUT")
 	s.Router.HandleFunc("/users/{user_id}", middlewares.SetMiddlewareAuthentication(s.DeleteUser)).Methods("DELETE")

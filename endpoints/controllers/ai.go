@@ -40,7 +40,7 @@ func (server *Server) AI(w http.ResponseWriter, r *http.Request) {
 	}
 	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, errors.New("ai err"))
+		responses.ERROR(w, http.StatusInternalServerError, errors.New("ai err"+err.Error()))
 		return
 	}
 	responses.JSON(w, http.StatusOK, struct {

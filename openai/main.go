@@ -9,7 +9,9 @@ import (
 )
 
 func main() {
-	c := gogpt.NewClient("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")
+	// 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
+	// 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
+	c := gogpt.NewClient("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")
 	ctx := context.Background()
 
 	req := gogpt.CompletionRequest{

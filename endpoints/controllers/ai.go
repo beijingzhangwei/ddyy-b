@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/beijingzhangwei/ddyy-b/endpoints/models"
 	responses "github.com/beijingzhangwei/ddyy-b/endpoints/reponses"
 	gogpt "github.com/sashabaranov/go-gpt3"
@@ -40,7 +39,12 @@ func (server *Server) AI(w http.ResponseWriter, r *http.Request) {
 	}
 	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, errors.New("ai err"+err.Error()))
+		//responses.ERROR(w, http.StatusInternalServerError, errors.New("ai err"+err.Error()))
+		responses.JSON(w, http.StatusOK, struct {
+			Answer string `json:"answer"`
+		}{
+			Answer: "对不起，发生意外了！",
+		})
 		return
 	}
 	responses.JSON(w, http.StatusOK, struct {

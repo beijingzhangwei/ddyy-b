@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	c := gogpt.NewClient("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")
+	c := gogpt.NewClient("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")
 	ctx := context.Background()
 
 	req := gogpt.CompletionRequest{
@@ -19,6 +19,7 @@ func main() {
 	}
 	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	fmt.Println(resp.Choices[0].Text)

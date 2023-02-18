@@ -30,7 +30,7 @@ func (server *Server) AI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := gogpt.NewClient("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")
+	c := gogpt.NewClient("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")
 	ctx := context.Background()
 
 	req := gogpt.CompletionRequest{

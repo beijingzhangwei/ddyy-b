@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.4.0
+	github.com/sashabaranov/go-gpt3 v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 	gorm.io/driver/mysql v1.4.3
 	gorm.io/gorm v1.24.0

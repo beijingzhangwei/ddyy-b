@@ -13,6 +13,8 @@ func (s *Server) initializeRoutes() {
 
 	// Login Route
 	s.Router.HandleFunc("/api/auth/login", middlewares.SetMiddlewareJSON(s.Login)).Methods("POST")
+	// ai
+	s.Router.HandleFunc("/ai/qa", middlewares.SetMiddlewareJSON(s.AI)).Methods("POST")
 
 	//Users routes
 	s.Router.HandleFunc("/api/auth/create-user", middlewares.SetMiddlewareJSON(s.CreateUser)).Methods("POST")
